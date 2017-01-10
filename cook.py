@@ -87,22 +87,28 @@ class Cook:
                     if not i.placed:
                         print('Объект:', i.name, 'не помещен!')
                         return
+                c = Cake()
+                print('Запущен таймер выпечки!')
+                while self.timer < 30:
+                    print('Значение таймера:', self.timer)
+                    self.timer += 1
+                c.crust = True
             else:
                 print('Форма не заполнена!')
                 return
         else:
             print('Ошибка! Нет компонента действия: Форма')
-        c = Cake()
-        print('Запущен таймер выпечки!')
-        while self.timer < 30:
-            print('Значение таймера:', self.timer)
-            self.timer += 1
-        c.crust = True
-        c.baked = True
-        print('Испечен:', c.name)
-        return c
+        if c.crust:
+            c.baked = True
+            print('Испечен:', c.name)
+            return c
+        else:
+            print('Пирог не испечен!')
+            return c
 
     def finish_cooking(self, cake):
-        if cake.crust:
+        if cake.baked:
             cake.done = True
             print('Готов:', cake.name)
+        else:
+            print('Ошибка! Не готов:', cake.name)
