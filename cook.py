@@ -3,10 +3,10 @@ from ingredients import *
 
 class Cook:
     def __init__(self):
-        self.knife = True
-        self.form = Form()
-        self.plate = True
-        self.oven = True
+        self.knife = None
+        self.form = None
+        self.plate = None
+        self.oven = None
         self.timer = 0
         print('Повар готов к приготовлению блюда.')
 
@@ -15,8 +15,11 @@ class Cook:
         print('Куплен:', ingred.name)
 
     def break_egg(self, egg):
-        egg.broken = True
-        print('Разбито:', egg.name)
+        if self.knife:
+            egg.broken = True
+            print('Разбито:', egg.name)
+        else:
+            print('Ошибка! Нет компонента действия: Нож')
 
     def split_egg(self, egg):
         w, y = egg.eggsplit()
@@ -24,48 +27,71 @@ class Cook:
         return w, y
 
     def mix_ingerds(self, ing1, ing2):
-        print('Cмешаны объекты:', ing1.name, ',', ing2.name)
-        if str(type(ing1)) == "<class 'ingredients.Yellow'>" and str(type(ing2)) == "<class 'ingredients.SourCream'>":
-            sm = SourMixture()
-            return sm
-        elif str(type(ing1)) == "<class 'ingredients.White'>" and str(type(ing2)) == "<class 'ingredients.SourMixture'>":
-            ms = Mass()
-            return ms
+        if self.plate:
+            if isinstance(ing1, Yellow) and isinstance(ing2, SourCream):
+                sm = SourMixture()
+                print('Cмешаны объекты:', ing1.name, ',', ing2.name)
+                return sm
+            if isinstance(ing1, White) and isinstance(ing2, SourMixture):
+                ms = Mass()
+                print('Cмешаны объекты:', ing1.name, ',', ing2.name)
+                return ms
+        else:
+            print('Ошибка! Нет компонента действия: Емкость')
 
     def whip(self, wh):
-        print('Взбиты:', wh.name)
-        wh.whipped = True
+        if self.plate:
+            print('Взбиты:', wh.name)
+            wh.whipped = True
+        else:
+            print('Ошибка! Нет компонента действия: Емкость')
 
     def cut(self, ing):
-        print('Нарезан:', ing.name)
-        ing.cut = True
+        if self.knife:
+            print('Нарезан:', ing.name)
+            ing.cut = True
+        else:
+            print('Ошибка! Нет компонента действия: Нож')
 
     def wash(self, ing):
         print('Вымыт:', ing.name)
         ing.washed = True
 
     def clean(self, ing):
-        print('Очищен:', ing.name)
-        ing.cleaned = True
+        if self.knife:
+            print('Очищен:', ing.name)
+            ing.cleaned = True
+        else:
+            print('Ошибка! Нет компонента действия: Нож')
 
     def defreeze(self, ing):
         print('Разморожен:', ing.name)
         ing.defreezed = True
 
     def place(self, ing, onto):
-        print('Объект:', ing.name, 'Помещен в:', onto.name)
+        try:
+            print('Объект:', ing.name, 'Помещен в:', onto.name)
+            ing.placed = True
+            onto.covered = True
+        except AttributeError:
+            print('Ошибка! Нет компонента действия')
+        '''
         ing.placed = True
         onto.covered = True
+        '''
 
     def bake(self, ingreds):
-        if self.form.covered:
-            for i in ingreds:
-                if not i.placed:
-                    print('Объект:', i.name, 'не помещен!')
-                    return
+        if self.form:
+            if self.form.covered:
+                for i in ingreds:
+                    if not i.placed:
+                        print('Объект:', i.name, 'не помещен!')
+                        return
+            else:
+                print('Форма не заполнена!')
+                return
         else:
-            print('Форма не заполнена!')
-            return
+            print('Ошибка! Нет компонента действия: Форма')
         c = Cake()
         print('Запущен таймер выпечки!')
         while self.timer < 30:
